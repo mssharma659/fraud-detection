@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body style="background:#0f172a; color:white; text-align:center;">
+
+<h2>📊 Live Fraud Dashboard</h2>
+
+<div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap;">
+
+    <!-- Pie -->
+    <div style="width:300px;">
+        <h4>Pie Chart</h4>
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <!-- Bar -->
+    <div style="width:300px;">
+        <h4>Bar Chart</h4>
+        <canvas id="barChart"></canvas>
+    </div>
+
+    <!-- Line -->
+    <div style="width:300px;">
+        <h4>Line Chart</h4>
+        <canvas id="lineChart"></canvas>
+    </div>
+
+</div>
+
+<script>
+async function loadData() {
+    const res = await fetch('/api/data');
+    const data = await res.json();
+
+    const labels = Object.keys(data);
+    const values = Object.values(data);
+
+    // Destroy old charts
+    if (window.pie) window.pie.destroy();
+    if (window.bar) window.bar.destroy();
+    if (window.line) window.line.destroy();
+
+    // PIE
+    window.pie = new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{ data: values }]
+        }
+    });
+
+    // BAR
+    window.bar = new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{ data: values }]
+        }
+    });
+
+    // LINE
+    window.line = new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{ data: values }]
+        }
+    });
+}
+
+// auto refresh
+setInterval(loadData, 3000);
+loadData();
+</script>
+
+<br><br>
+<a href="/admin" style="color:white;">⬅ Back</a>
+
+</body>
+</html>
